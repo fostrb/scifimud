@@ -1,9 +1,11 @@
-from newdeckprograms.newprog import NewProg
+from programs.newprog import NewProg
 import argparse
 import time
 
 
 __all__ = ['Look', 'Go', 'Progs', 'Talk', 'Whisper', 'Users', 'Slap', 'Inspect', 'Whoami', 'Attack', 'Stats', 'Derezz']
+
+# TODO: classify commands by type so they can be listed usefully
 
 
 class Look(NewProg):
@@ -13,17 +15,19 @@ class Look(NewProg):
         self.aliases = ['ls', 'l', 'll']
 
     def run(self, player, args, mud):
+        output = ""
         loc = mud.map.get_location(player.location)
         players_in_loc = []
-        for player_id, p in mud.players.items():
+        for p in mud.players:
             if p.location == loc.name:
                 players_in_loc.append(p)
 
-        player.message(loc.get_display())
+        output += loc.get_display() + '\n'
         if len(players_in_loc) > 0:
-            player.message("Players here:")
+            output += "Players here:\n"
             for p in players_in_loc:
-                player.message('\t' + p.name)
+                output += '\n'+ p.name + '\n'
+        return output
 
 
 class Go(NewProg):
@@ -33,14 +37,16 @@ class Go(NewProg):
         self.aliases = ['move', 'walk']
 
     def run(self, player, args, mud):
+        output = ""
         loc = mud.map.get_location(player.location)
         if args in loc.exits.keys():
             player.location = loc.exits[args]
-            player.message("Moved via " + args + " to " + loc.exits[args])
-            for pid, pl in mud.players.items():
+            output += "Moved via " + args + " to " + loc.exits[args] + '\n'
+            for pl in mud.players:
                 if pl != player:
                     if pl.location == player.location:
-                        pl.message(player.name + " entered " + pl.location + " via " + args)
+                        output += player.name + " entered " + pl.location + " via " + args + '\n'
+        return output
 
 
 class Progs(NewProg):
@@ -49,9 +55,11 @@ class Progs(NewProg):
         self.name = 'progs'
 
     def run(self, player, args, mud):
-        player.message("Programs loaded:")
-        for prog in player.programs:
-            player.message("\t" + prog.name)
+        output = ''
+        output += "Programs loaded:\n"
+        for prog in mud.programs:
+            output += "\t" + prog.name + '\n'
+        return output
 
 
 class Talk(NewProg):
@@ -60,7 +68,7 @@ class Talk(NewProg):
         self.name = 'talk'
 
     def run(self, player, args, mud):
-        for pid, otherplayer in mud.players.items():
+        for otherplayer in mud.players:
             if otherplayer.location == player.location:
                 otherplayer.message(player.name + ':' + args)
 
@@ -76,7 +84,7 @@ class Whisper(NewProg):
         for each in range(1, len(args.split())):
             message += args.split()[each] + ' '
 
-        for pid, target_player in mud.players.items():
+        for target_player in mud.players:
             if target_player.name == target:
                 target_player.message('[' + player.name + ']:' + message)
 
@@ -87,9 +95,11 @@ class Users(NewProg):
         self.name = 'users'
 
     def run(self, player, args, mud):
-        player.message("Users online:")
-        for pid, p, in mud.players.items():
-            player.message(p.name)
+        output = ""
+        output += "Users online:\n"
+        for p in mud.players:
+            output += p.name + '\n'
+        return output
 
 
 class Slap(NewProg):
@@ -99,10 +109,10 @@ class Slap(NewProg):
 
     def run(self, player, args, mud):
         target = args
-        for pid, p in mud.players.items():
+        for p in mud.players:
             if p.name == target and p.location == player.location:
                 p.message("SLAP")
-                for nid, np in mud.players.items():
+                for np in mud.players:
                     if np.location == p.location:
                         np.message(player.name + " SLAPPED " + target)
                 break
@@ -116,24 +126,24 @@ class Inspect(NewProg):
         self.parser.add_argument('target')
 
     def run(self, player, args, mud):
+        output = ''
         try:
             parsed = self.parse_args(args)
             if parsed.target:
                 # things in the location
                 loc = mud.map.get_location(player.location)
-                for pid, pl in mud.players.items():
+                for pl in mud.players:
                     if pl.location == player.location:
                         if pl.name == parsed.target:
-                            player.message("Inspecting " + pl.name + "...")
-                            player.message("Health:" + str(pl.health))
-                            player.message("Atk:" + str(pl.atk))
+                            output += "Inspecting " + pl.name + "...\n"
                             break
                 for exitname, e in loc.exits.items():
                     if exitname == parsed.target:
-                        player.message("Inspecting " + exitname + "...")
-                        player.message("Leads to " + e)
-        except:
-            pass
+                        output += "Inspecting " + exitname + "...\n"
+                        output += "leads to " + e + '\n'
+            return output
+        except Exception as e:
+            mud.mud_server.log(e)
 
 
 class Whoami(NewProg):
@@ -142,7 +152,7 @@ class Whoami(NewProg):
         self.name = 'whoami'
 
     def run(self, player, args, mud):
-        player.message(player.name)
+        return player.name
 
 
 class Load(NewProg):
@@ -166,7 +176,7 @@ class Attack(NewProg):
         try:
             parsed = self.parse_args(args)
             if parsed.target:
-                for pid, target in mud.players.items():
+                for target in mud.players:
                     if target.location == player.location:
                         if target.name == parsed.target:
                             result = player.attack_target(target)
@@ -176,7 +186,6 @@ class Attack(NewProg):
                             else:
                                 target.message(player.name + " took a swing at you!")
                             break
-
         except Exception as e:
             player.message(str(e))
 
@@ -194,7 +203,7 @@ class Derezz(NewProg):
         try:
             parsed = self.parse_args(args)
             if parsed.target:
-                for pid, target in mud.players.items():
+                for target in mud.players:
                     if target.location == player.location:
                         if target.name == parsed.target:
                             target.derezz(10, str(player.name + " derezzed you."))
@@ -208,9 +217,10 @@ class Stats(NewProg):
         self.name = 'stats'
 
     def run(self, player, args, mud):
-        player.message(player.name)
+        output = ""
+        output += player.name + '\n'
         if player.is_derezzed:
-            player.message("You are derezzed")
-            player.message("remaining:" + str(int(player.derezzed_remaining)))
+            output += "You are derezzed\n"
+            output += "remaining:" + str(int(player.derezzed_remaining)) + '\n'
         else:
-            player.message("Health:" + str(player.health))
+            output += "Health:" + str(player.health) + '\n'

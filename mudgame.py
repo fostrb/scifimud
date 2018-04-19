@@ -1,69 +1,61 @@
-from MUDServer import MudServer
-from gameobjs import *
+from mudserver import MudServer
+#from gameobjs import * # uncomment import later for type hinting
 import time
 from galaxmap import GalaxMap
+from mudinterpreter.mudinterpreter import MUDInterpreter
 
 
 class MudGame(object):
     def __init__(self, name='MUD_TEST'):
         self.name = name
+        self.players = []
         self.saved_players = {}
-        self.players = {}
         self.mud_server = MudServer()
+        self.interpreter = MUDInterpreter()
         self.map = GalaxMap()
 
     def handle_new_connections(self):
-        for player_id in self.mud_server.get_new_players():
-            client = self.mud_server._clients[player_id]
-            self.players[player_id] = Player(client=client)
-            self.mud_server.log('new connection: ' + client.address)
-            self.mud_server.send_message(player_id, "Name:")
+        for player in self.mud_server.get_new_players():
+            self.players.append(player)
+            self.mud_server.log('new connection: ' + player.address)
+            player.message("Name:")
 
     def handle_disconnect(self):
-        for dc_id in self.mud_server.get_disconnected_players():
-
-            if dc_id not in self.players.keys():
+        for dc_player in self.mud_server.get_disconnected_players():
+            if dc_player not in self.players:
                 continue
-
-            dc_player = self.players[dc_id]
             self.saved_players[dc_player.name] = dc_player
-
-            dc_name = str(dc_player.name)
-            self.mud_server.log(dc_name)
-            for plid, player in self.players.items():
-                self.mud_server.log(dc_name + " disconnected")
-                player.message(dc_name + " disconnected")
-            self.mud_server.log(dc_name + " disconnected")
-            del (self.players[dc_id])
+            name = str(dc_player.name)
+            for player in self.players:
+                player.message(name + " disconnected")
+            self.mud_server.log(name + " disconnected.")
+            self.players.remove(dc_player)
 
     def handle_commands(self):
-        for player_id, cmd, params in self.mud_server.get_commands():
-            if player_id not in self.players.keys():
+        for player, line in self.mud_server.get_commands():
+            if player not in self.players:
                 continue
 
-            player = self.players[player_id]
-
+            #  replace with login at some point
             if player.name is None:
-                player.name = cmd
-                player.player_id = player_id
+                player.name = line
                 player.location = "CyberBar"
 
                 if player.name in self.saved_players.keys():
                     savedplayer = self.saved_players[player.name]
-                    player.message("Welcome back!")
+                    player.message("Welcome back " + player.name)
                     player.location = savedplayer.location
-
-                for pid, pl in self.players.items():
-                    self.mud_server.send_message(pid, player.name + " entered.")
-
+                for p in self.players:
+                    p.message(player.name + " entered.")
                 self.mud_server.log(player.name + " entered.")
-                player.load_programs()
-
             else:
-                player.attempt_run_program(cmd, params, self)
+                # normal command parsing
+                output = self.interpreter.attempt_run(player, line, self)
+                if output:
+                    player.message(output)
 
     def check_players(self):
-        for pid, player in self.players.items():
+        for player in self.players:
             player.update()
 
     def run(self):

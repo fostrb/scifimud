@@ -7,7 +7,6 @@ from deck_programs.deckprogram import DeckProgram
 
 IDENTCHARS = string.ascii_letters + string.digits + '_'
 
-
 class DeckShell(object):
     identchars = IDENTCHARS
     completekey = 'tab'

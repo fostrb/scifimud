@@ -1,14 +1,14 @@
 import argparse
 
+# TODO: probably just get rid of argparse deps. Maybe look at click. Or just beef up the MUDInterpreter.
+
 
 class WrapperCmdLineArgParser:
     def __init__(self, parser):
-        """Init decorator with an argparse parser to be used in parsing cmd-line options"""
         self.parser = parser
         self.help_msg = ""
 
     def __call__(self, f):
-        """Decorate 'f' to parse 'line' and pass options to decorated function"""
         if not self.parser:  # If no parser was passed to the decorator, get it from 'f'
             self.parser = f(None, None, None, True)
 
@@ -40,7 +40,7 @@ class NewProg(object):
         if player.is_derezzed and not self.run_while_derezzed:
             player.message("you can't run " + self.name + " while derezzed")
         else:
-            self.run(player, args, mud)
+            return self.run(player, args, mud)
 
     def run(self, player, args, mud):
         pass

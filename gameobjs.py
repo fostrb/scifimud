@@ -1,46 +1,49 @@
 import socket
-import newdeckprograms
-from newdeckprograms.newprog import NewProg
+import programs
+from programs.newprog import NewProg
 import random
 import time
 
 
-class Client(object):
-    def __init__(self, socket=None, address="", buffer="", last_check=0):
-        self.socket = socket
+# TODO: add 'inspect' properties to every game object. (Including the map. Also fix the map.)
+
+
+class ClientPlayer(object):
+    def __init__(self, sock=None, address="", buffer="", last_check=0):
+        self.socket = sock
         self.address = address
         self.buffer = buffer
         self.last_check = last_check
 
-
-class Player(object):
-    def __init__(self, name=None, player_id=None, location=None, client=None):
-        self.name = name
-        self.player_id = player_id
-        self.location = location
-        self._client = client
+        self.name = None
+        self.location = None
         self.programs = []
-        self.program_dict = {}
 
+        # this shit's just for testing purposes
         self.max_health = 10
+        self.health = self.max_health
+        self.defense = 10
+        self.atk = 2
+        # -------------------------------------
 
         self.is_derezzed = False
         self.derezzed_at = None
         self.derezzed_total_time = 0
 
-        self.health = self.max_health
-        self.atk = 2
-        self.defense = 20
+        self._lastcmd = ''
 
-    def attack_target(self, target_player):
-        roll = random.randint(1, 100)
-        self.message("Rolled " + str(roll) + "+" + str(self.atk) + "=" + str(roll + self.atk))
-        if roll + self.atk > target_player.defense:
-            self.message("HIT")
-            target_player.health -= self.atk
+    def msg_literal(self, msg):
+        try:
+            self.socket.sendall(bytearray(msg, "ascii"))
             return True
-        else:
-            self.message("MISS")
+        except socket.error:
+            return False
+
+    def message(self, message):
+        try:
+            self.socket.sendall(bytearray(message+'\n\r', "ascii"))
+            return True
+        except socket.error:
             return False
 
     def derezz(self, derezzed_time=60, drmessage=None):
@@ -71,27 +74,32 @@ class Player(object):
             if self.derezzed_remaining <= 0:
                 self.rezz()
 
+    # This would be a program in the future
+    # Also it'd be not this. This is dumb as hell.
+    def attack_target(self, target_player):
+        roll = random.randint(1, 100)
+        self.message("Rolled " + str(roll) + "+" + str(self.atk) + "=" + str(roll + self.atk))
+        if roll + self.atk > target_player.defense:
+            self.message("HIT")
+            target_player.health -= self.atk
+            return True
+        else:
+            self.message("MISS")
+            return False
+
     def update(self):
         self.check_rezzed()
 
-    def load_programs(self):
-        for name, cls in newdeckprograms.__dict__.items():
-            if isinstance(cls, type):
-                iprog = cls()
-                if isinstance(iprog, NewProg):
-                    self.programs.append(iprog)
-                    self.program_dict[iprog.name] = iprog
 
-    def attempt_run_program(self, cmd, args, mud):
-        for program in self.programs: # type: NewProg
-            if cmd == program.name or cmd in program.aliases:
-                program.attempt_run(self, args, mud)
-                break
+class Client(object):
+    def __init__(self, socket=None, address="", buffer="", last_check=0):
+        self.socket = socket
+        self.address = address
+        self.buffer = buffer
+        self.last_check = last_check
 
-    def message(self, message):
+    def msg(self, msg):
         try:
-            self._client.socket.sendall(bytearray(message+"\n\r", "ascii"))
-        except KeyError:
-            pass
+            self.socket.sendall(bytearray(msg+"\n\r", "ascii"))
         except socket.error:
-            pass
+            return False

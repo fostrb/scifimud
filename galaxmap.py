@@ -1,3 +1,4 @@
+# TODO: Scrap and rewrite.
 
 
 class Location(object):
