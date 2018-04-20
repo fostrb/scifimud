@@ -50,9 +50,12 @@ class MudGame(object):
                 self.mud_server.log(player.name + " entered.")
             else:
                 # normal command parsing
-                output = self.interpreter.attempt_run(player, line, self)
-                if output:
-                    player.message(output)
+                try:
+                    output = self.interpreter.attempt_run(player, line, self)
+                    if output:
+                        player.message(output)
+                except:
+                    pass
 
     def check_players(self):
         for player in self.players:

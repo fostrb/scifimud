@@ -55,9 +55,9 @@ class Progs(NewProg):
         self.name = 'progs'
 
     def run(self, player, args, mud):
-        output = ''
+        output = ""
         output += "Programs loaded:\n"
-        for prog in mud.programs:
+        for prog in mud.interpreter.programs:
             output += "\t" + prog.name + '\n'
         return output
 
