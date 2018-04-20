@@ -26,7 +26,6 @@ def run():
             else:
                 #line = sys.stdin.readline().encode('ascii')
                 line = input().encode('ascii')
-                line = readline.get
                 line += b'\n'
                 strline = line.decode('ascii').strip('\n')
                 if not line:
