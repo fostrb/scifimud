@@ -95,7 +95,7 @@ class MudServer(object):
             if player.socket not in rlist:
                 continue
             try:
-                data = player.socket.recv(4096).decode("ascii")
+                data = player.socket.recv(4096).decode("utf8")
                 message = self._parse_client_data(player, data)
                 self._new_events.append((self._EVENT_COMMAND, player, message.lower()))
             except socket.error:

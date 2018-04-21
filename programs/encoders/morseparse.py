@@ -1,9 +1,9 @@
-from programs.newprog import *
+from programs.mprog import *
 
 # TODO: get this to read whitespace and unmappable chars
 
 
-class MorseParse(NewProg):
+class MorseParse(MProg):
     def __init__(self):
         super(MorseParse, self).__init__()
         self.name = 'morse'

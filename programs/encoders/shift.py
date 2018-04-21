@@ -1,10 +1,10 @@
-from programs.newprog import *
+from programs.mprog import *
 
 
 # TODO: Fix this up. It's unreliable at best
 
 
-class Shift(NewProg):
+class Shift(MProg):
     def __init__(self):
         super(Shift, self).__init__()
         self.name = 'shift'
@@ -20,8 +20,8 @@ class Shift(NewProg):
 
         encoded = ""
         for i in range(len(message)):
-            if message[i] in self.alpha:
-                oldchar = self.alpha.index(message[i])
+            if message[i].lower() in self.alpha:
+                oldchar = self.alpha.index(message[i].lower())
                 newchar = self.alpha[(oldchar+shift) % len(self.alpha)]
                 encoded += newchar
             else:

@@ -1,8 +1,11 @@
 from mudserver import MudServer
 #from gameobjs import * # uncomment import later for type hinting
 import time
-from galaxmap import GalaxMap
+#from galaxmap import GalaxMap
 from mudinterpreter.mudinterpreter import MUDInterpreter
+
+from mapobjs.room import GNETMap
+from roomtest import GalaxMap
 
 
 class MudGame(object):
@@ -47,7 +50,7 @@ class MudGame(object):
                     player.location = savedplayer.location
                 for p in self.players:
                     p.message(player.name + " entered.")
-                self.mud_server.log(player.name + " entered.")
+                self.mud_server.log(player.name + " entered ")
             else:
                 # normal command parsing
                 try:
@@ -63,7 +66,7 @@ class MudGame(object):
 
     def run(self):
         while True:
-            time.sleep(0.2)
+            #time.sleep(0.2)
             self.mud_server.update()
             self.handle_new_connections()
             self.handle_disconnect()

@@ -1,14 +1,14 @@
-from programs.newprog import NewProg
+from programs.mprog import MProg
 import argparse
 import time
 
 
-__all__ = ['Look', 'Go', 'Progs', 'Talk', 'Whisper', 'Users', 'Slap', 'Inspect', 'Whoami', 'Attack', 'Stats', 'Derezz']
+__all__ = ['Look', 'Go', 'Progs', 'Talk', 'Whisper', 'Users', 'Slap', 'Inspect', 'Whoami', 'Attack', 'Stats', 'Derezz', 'Var']
 
 # TODO: classify commands by type so they can be listed usefully
 
 
-class Look(NewProg):
+class Look(MProg):
     def __init__(self):
         super(Look, self).__init__()
         self.name = 'look'
@@ -26,11 +26,11 @@ class Look(NewProg):
         if len(players_in_loc) > 0:
             output += "Players here:\n"
             for p in players_in_loc:
-                output += '\n'+ p.name + '\n'
+                output += '\n' + p.name + '\n'
         return output
 
 
-class Go(NewProg):
+class Go(MProg):
     def __init__(self):
         super(Go, self).__init__()
         self.name = 'go'
@@ -49,7 +49,7 @@ class Go(NewProg):
         return output
 
 
-class Progs(NewProg):
+class Progs(MProg):
     def __init__(self):
         super(Progs, self).__init__()
         self.name = 'progs'
@@ -62,7 +62,7 @@ class Progs(NewProg):
         return output
 
 
-class Talk(NewProg):
+class Talk(MProg):
     def __init__(self):
         super(Talk, self).__init__()
         self.name = 'talk'
@@ -73,7 +73,7 @@ class Talk(NewProg):
                 otherplayer.message(player.name + ':' + args)
 
 
-class Whisper(NewProg):
+class Whisper(MProg):
     def __init__(self):
         super(Whisper, self).__init__()
         self.name = 'whisper'
@@ -89,7 +89,7 @@ class Whisper(NewProg):
                 target_player.message('[' + player.name + ']:' + message)
 
 
-class Users(NewProg):
+class Users(MProg):
     def __init__(self):
         super(Users, self).__init__()
         self.name = 'users'
@@ -102,7 +102,7 @@ class Users(NewProg):
         return output
 
 
-class Slap(NewProg):
+class Slap(MProg):
     def __init__(self):
         super(Slap, self).__init__()
         self.name = 'slap'
@@ -118,7 +118,7 @@ class Slap(NewProg):
                 break
 
 
-class Inspect(NewProg):
+class Inspect(MProg):
     def __init__(self):
         super(Inspect, self).__init__()
         self.name = 'inspect'
@@ -146,7 +146,7 @@ class Inspect(NewProg):
             mud.mud_server.log(e)
 
 
-class Whoami(NewProg):
+class Whoami(MProg):
     def __init__(self):
         super(Whoami, self).__init__()
         self.name = 'whoami'
@@ -155,7 +155,7 @@ class Whoami(NewProg):
         return player.name
 
 
-class Load(NewProg):
+class Load(MProg):
     def __init__(self):
         super(Load, self).__init__()
         self.name = 'load'
@@ -164,7 +164,7 @@ class Load(NewProg):
         pass
 
 
-class Attack(NewProg):
+class Attack(MProg):
     def __init__(self):
         super(Attack, self).__init__()
         self.name = 'attack'
@@ -190,7 +190,7 @@ class Attack(NewProg):
             player.message(str(e))
 
 
-class Derezz(NewProg):
+class Derezz(MProg):
     def __init__(self):
         super(Derezz, self).__init__()
         self.name = 'derezz'
@@ -211,7 +211,7 @@ class Derezz(NewProg):
             player.message(str(e))
 
 
-class Stats(NewProg):
+class Stats(MProg):
     def __init__(self):
         super(Stats, self).__init__()
         self.name = 'stats'
@@ -224,3 +224,18 @@ class Stats(NewProg):
             output += "remaining:" + str(int(player.derezzed_remaining)) + '\n'
         else:
             output += "Health:" + str(player.health) + '\n'
+        return output
+
+
+class Var(MProg):
+    def __init__(self):
+        super(Var, self).__init__()
+        self.name = 'var'
+
+    def run(self, players, args, mud):
+        # varname
+        # varname = 1
+        # varname = varname
+        # varname =
+        output = args
+        return output

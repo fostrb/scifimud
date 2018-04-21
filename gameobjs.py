@@ -1,6 +1,6 @@
 import socket
 import programs
-from programs.newprog import NewProg
+from programs.mprog import MProg
 import random
 import time
 

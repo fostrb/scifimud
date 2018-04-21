@@ -11,6 +11,6 @@ class NewDeck(object):
 
 
 if __name__ == '__main__':
-    loc = Location(directory="/home/fostrb/PycharmProjects/decker/FILESDIR")
+    loc = Location(directory="./FILESDIR")
     env = Environment(loc)
     d = NewDeck(env)

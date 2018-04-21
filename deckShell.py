@@ -7,6 +7,7 @@ from deck_programs.deckprogram import DeckProgram
 
 IDENTCHARS = string.ascii_letters + string.digits + '_'
 
+
 class DeckShell(object):
     identchars = IDENTCHARS
     completekey = 'tab'
@@ -31,6 +32,7 @@ class DeckShell(object):
                 if isinstance(iprog, DeckProgram):
                     self.programs.append(cls())
                     self.program_dict[iprog.name] = iprog
+                    #print(iprog.name)
 
     def cmdloop(self, intro=None):
         self.preloop()

@@ -1,6 +1,7 @@
 import programs
-from programs.newprog import *
+from programs.mprog import *
 import string
+import traceback
 
 IDENTCHARS = string.ascii_letters + string.digits + '_'
 
@@ -16,11 +17,10 @@ class MUDInterpreter(object):
         for name, cls in programs.__dict__.items():
             if isinstance(cls, type):
                 iprog = cls()
-                if isinstance(iprog, NewProg):
+                if isinstance(iprog, MProg):
                     self.programs.append(iprog)
 
     def pipe(self, player, args, mud):
-
         buffer = None
         for arg in args:
             s = arg
@@ -48,11 +48,12 @@ class MUDInterpreter(object):
             return out
         else:
             try:
-                for program in self.programs: # type: NewProg
+                for program in self.programs: # type: MProg
                     if cmd == program.name or cmd in program.aliases:
                         return program.attempt_run(player, args, mud)
             except Exception as e:
-                print(e)
+                player.message(e)
+                mud.mud_server.log(e)
 
     def default(self, line):
         return str('*** Unknown syntax: ' + line)
@@ -62,6 +63,7 @@ class MUDInterpreter(object):
             return self.run_cmd(player, player._lastcmd, mud)
 
     def pre_parseline(self, line):
+        line = line.strip()
         if '|' in line:
             return 'pipe', line.split('|'), line
         return self.parseline(line)
