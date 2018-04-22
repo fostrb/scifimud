@@ -5,7 +5,7 @@ import time
 from mudinterpreter.mudinterpreter import MUDInterpreter
 
 from mapobjs.room import GNETMap
-from roomtest import GalaxMap
+from roomtest import GalaxMap, NewArea
 
 
 class MudGame(object):
@@ -16,6 +16,7 @@ class MudGame(object):
         self.mud_server = MudServer()
         self.interpreter = MUDInterpreter()
         self.map = GalaxMap()
+        self.newmap = NewArea(None)
 
     def handle_new_connections(self):
         for player in self.mud_server.get_new_players():
@@ -57,8 +58,15 @@ class MudGame(object):
                     output = self.interpreter.attempt_run(player, line, self)
                     if output:
                         player.message(output)
-                except:
-                    pass
+                except Exception as e:
+                    player.message("Error with command")
+                    self.mud_server.log("-------------")
+                    self.mud_server.log("COMMAND ERROR")
+                    self.mud_server.log("-------------")
+                    self.mud_server.log(player.name)
+                    self.mud_server.log(line)
+                    self.mud_server.log(str(e))
+                    self.mud_server.log("-------------")
 
     def check_players(self):
         for player in self.players:

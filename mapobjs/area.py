@@ -11,3 +11,5 @@ class Area(object):
             self.grid.append([])
             for column in range(height):
                 self.grid[row].append(0)
+
+        print(self.grid)

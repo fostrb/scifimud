@@ -53,6 +53,8 @@ class Go(MProg):
                 if pl != player:
                     if pl.location == player.location:
                         pl.message(player.name + " entered " + pl.location + " via " + this_exit.name + '\n')
+        else:
+            output += "Couldn't find that location"
         return output
 
 
