@@ -41,7 +41,7 @@ if __name__ == '__main__':
     rooms.append(r1)
 
     r2 = Room('The Garden')
-    r2.exits.append(RoomExit(direction='West', dest='Galaxnet Dome', name='garden door'))
+    r2.exits.append(RoomExit(direction='West', dest='Galaxnet Dome', name='garden_door'))
     r2.description = "You're in the gnet garden."
     rooms.append(r2)
 
