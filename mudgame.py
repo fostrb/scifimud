@@ -42,7 +42,7 @@ class MudGame(object):
             #  replace with login at some point
             if player.name is None:
                 player.name = line
-                player.location = "CyberBar"
+                player.location = 'Galaxnet Dome'
 
                 if player.name in self.saved_players.keys():
                     savedplayer = self.saved_players[player.name]

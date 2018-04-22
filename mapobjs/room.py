@@ -17,6 +17,18 @@ class Room(object):
         self.directions = []
         self.description = ''
 
+    def get_exit_by_name(self, ename):
+        for rexit in self.exits:
+            if ename == rexit.name:
+                return rexit
+            return None
+
+    def get_exit_names(self):
+        rlist = []
+        for rexit in self.exits:
+            rlist.append(rexit.name)
+        return rlist
+
     def can_accept_exit(self, roomexit):
         if roomexit.direction.lower() == 'north':
             if 'south' not in self.directions:

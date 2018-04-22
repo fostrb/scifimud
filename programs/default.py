@@ -17,16 +17,22 @@ class Look(MProg):
     def run(self, player, args, mud):
         output = ""
         loc = mud.map.get_location(player.location)
-        players_in_loc = []
-        for p in mud.players:
-            if p.location == loc.name:
-                players_in_loc.append(p)
+        if loc:
+            players_in_loc = []
+            for p in mud.players:
+                if p.location == loc.name:
+                    players_in_loc.append(p)
 
-        output += loc.get_display() + '\n'
-        if len(players_in_loc) > 0:
-            output += "Players here:\n"
-            for p in players_in_loc:
-                output += '\n' + p.name + '\n'
+            output += loc.description + '\n'
+            if len(players_in_loc) > 0:
+                output += "Players here:\n"
+                for p in players_in_loc:
+                    output += '\n' + p.name + '\n'
+            
+            if len(loc.exits) > 0:
+                output += "Exits:\t"
+                for rexit in loc.exits:
+                    output += rexit.name + '\t'
         return output
 
 
@@ -39,13 +45,14 @@ class Go(MProg):
     def run(self, player, args, mud):
         output = ""
         loc = mud.map.get_location(player.location)
-        if args in loc.exits.keys():
-            player.location = loc.exits[args]
-            output += "Moved via " + args + " to " + loc.exits[args] + '\n'
+        this_exit = loc.get_exit_by_name(args)
+        if this_exit:
+            player.location = this_exit.dest
+            output += "Moved via " + this_exit.name + " to " + this_exit.dest + '\n'
             for pl in mud.players:
                 if pl != player:
                     if pl.location == player.location:
-                        output += player.name + " entered " + pl.location + " via " + args + '\n'
+                        pl.message(player.name + " entered " + pl.location + " via " + this_exit.name + '\n')
         return output
 
 
@@ -137,10 +144,10 @@ class Inspect(MProg):
                         if pl.name == parsed.target:
                             output += "Inspecting " + pl.name + "...\n"
                             break
-                for exitname, e in loc.exits.items():
-                    if exitname == parsed.target:
-                        output += "Inspecting " + exitname + "...\n"
-                        output += "leads to " + e + '\n'
+                for rexit in loc.exits:
+                    if rexit.name == parsed.target:
+                        output += "Inspecting " + rexit.name + "...\n"
+                        output += "leads to " + rexit.dest + '\n'
             return output
         except Exception as e:
             mud.mud_server.log(e)

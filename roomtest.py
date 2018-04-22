@@ -20,12 +20,10 @@ class GalaxMap(object):
         rooms.append(r2)
 
         wb = GNETMap(rooms)
-
-
         self.rooms = wb.rooms
 
     def get_location(self, name):
-        for room in rooms:
+        for room in self.rooms:
             if room.name == name:
                 return room
 
