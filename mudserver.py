@@ -29,7 +29,6 @@ class MudServer(object):
         self._new_events = []
 
         self._listen_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
         self._listen_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self._listen_socket.bind(("0.0.0.0", 1234))
         self._listen_socket.setblocking(False)

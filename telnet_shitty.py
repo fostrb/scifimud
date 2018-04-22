@@ -4,7 +4,7 @@ import sys
 import selectors
 import os
 import string
-import atexit
+#import atexit
 import threading
 
 #tn = Telnet('localhost', 1234)

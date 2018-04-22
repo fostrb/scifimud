@@ -18,10 +18,11 @@ class Room(object):
         self.description = ''
 
     def get_exit_by_name(self, ename):
+        ename = ename.strip()
         for rexit in self.exits:
             if ename == rexit.name:
                 return rexit
-            return None
+        return None
 
     def get_exit_names(self):
         rlist = []

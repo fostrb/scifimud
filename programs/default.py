@@ -27,7 +27,7 @@ class Look(MProg):
             if len(players_in_loc) > 0:
                 output += "Players here:\n"
                 for p in players_in_loc:
-                    output += '\n' + p.name + '\n'
+                    output += p.name + '\n'
             
             if len(loc.exits) > 0:
                 output += "Exits:\t"
