@@ -4,8 +4,8 @@ import time
 #from galaxmap import GalaxMap
 from mudinterpreter.mudinterpreter import MUDInterpreter
 
-from mapobjs.room import GNETMap
-from roomtest import GalaxMap, NewArea
+#from mapobjs.room import GNETMap
+from roomtest import NewArea
 
 
 class MudGame(object):
@@ -15,8 +15,8 @@ class MudGame(object):
         self.saved_players = {}
         self.mud_server = MudServer()
         self.interpreter = MUDInterpreter()
-        self.map = GalaxMap()
-        self.newmap = NewArea(None)
+        #self.map = GalaxMap()
+        self.map = NewArea(None)
 
     def handle_new_connections(self):
         for player in self.mud_server.get_new_players():
@@ -43,7 +43,9 @@ class MudGame(object):
             #  replace with login at some point
             if player.name is None:
                 player.name = line
-                player.location = 'Galaxnet Dome'
+                startroom = self.map.get_starting_room().name
+                player.location = startroom
+                #player.location = 'Galaxnet Dome'
 
                 if player.name in self.saved_players.keys():
                     savedplayer = self.saved_players[player.name]

@@ -1,31 +1,5 @@
 from mapobjs.area import Area
-from mapobjs.room import GNETMap, Room, RoomExit, RoomConnection, NewRoomConnection
-
-
-class GalaxMap(object):
-    def __init__(self):
-        rooms = []
-        startroom = Room('Galaxnet Dome')
-        startroom.description = "Welcome to gnet. You are in a dome. This is the spawnpoint."
-        rooms.append(startroom)
-
-        r1 = Room('The Foyer')
-        r1.exits.append(RoomExit(direction='North', dest='Galaxnet Dome', name='door'))
-        r1.description = "You are in the foyer outside the gnet spawn. It's shitty."
-        rooms.append(r1)
-
-        r2 = Room('The Garden')
-        r2.exits.append(RoomExit(direction='West', dest='Galaxnet Dome', name='garden_door'))
-        r2.description = "You're in the gnet garden."
-        rooms.append(r2)
-
-        wb = GNETMap(rooms)
-        self.rooms = wb.rooms
-
-    def get_location(self, name):
-        for room in self.rooms:
-            if room.name == name:
-                return room
+from mapobjs.room import Room, NewRoomConnection
 
 
 class NewArea(object):
@@ -53,6 +27,11 @@ class NewArea(object):
         self.rooms = rooms
         self.buildme()
 
+    def get_starting_room(self):
+        for room in self.rooms:
+            if room.name == 'Galaxnet Dome':
+                return room
+
     def printme(self):
         for room in self.rooms:
             print(room.name)
@@ -66,6 +45,7 @@ class NewArea(object):
             for conn in room._desired_connections:
                 room.connect_to(conn)
 
+    # get_location
     def get_room_by_name(self, name):
         for room in self.rooms:
             if room.name.lower() == name.lower():
@@ -75,6 +55,7 @@ class NewArea(object):
         for room in self.rooms:
             if room.id == rid:
                 return room
+
 
 class NewMap(object):
     def __init__(self, width, height):

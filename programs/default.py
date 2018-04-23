@@ -16,23 +16,14 @@ class Look(MProg):
 
     def run(self, player, args, mud):
         output = ""
-        loc = mud.map.get_location(player.location)
+        loc = mud.map.get_room_by_name(player.location)
         if loc:
             players_in_loc = []
             for p in mud.players:
                 if p.location == loc.name:
                     players_in_loc.append(p)
 
-            output += loc.description + '\n'
-            if len(players_in_loc) > 0:
-                output += "Players here:\n"
-                for p in players_in_loc:
-                    output += p.name + '\n'
-            
-            if len(loc.exits) > 0:
-                output += "Exits:\t"
-                for rexit in loc.exits:
-                    output += rexit.name + '\t'
+            output += loc.get_description()
         return output
 
 
@@ -44,7 +35,7 @@ class Go(MProg):
 
     def run(self, player, args, mud):
         output = ""
-        loc = mud.map.get_location(player.location)
+        loc = mud.map.get_room_by_name(player.location)
         this_exit = loc.get_exit_by_name(args)
         if this_exit:
             player.location = this_exit.dest
