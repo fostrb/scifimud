@@ -26,10 +26,9 @@ class Room(object):
         rval = self.name + '\n'
         rval += self.description+'\n'
         rval += "Doors:\n"
-        print("HERE")
         for direction, door_dict in self.connection_dict.items():
             for door, dest in door_dict.items():
-                print(direction, door.name, dest.name)
+                #print(direction, door.name, dest.name)
                 rval += "\t" + direction.upper() + " : " + door.name + " -> " + dest.name
         return rval
 

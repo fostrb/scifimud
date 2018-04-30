@@ -43,7 +43,7 @@ class NewArea(object):
     def buildme(self):
         for room in self.rooms:
             for conn in room._desired_connections:
-                room.connect_to(conn)
+                room.new_connect(conn)
 
     # get_location
     def get_room_by_name(self, name):
