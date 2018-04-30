@@ -106,7 +106,6 @@ class Area(object):
 
         if self.get_cell(x, y) is not None:
             return None
-
         r = RCell(rname, self.neighbors_cb, self.coordinates_cb, self.connections_cb, self.build_north_cb,
                   self.build_south_cb, self.build_east_cb, self.build_west_cb)
         self.set_cell(x, y, r)
