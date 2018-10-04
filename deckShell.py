@@ -28,8 +28,7 @@ class DeckShell(object):
     def import_programs(self):
         for name, cls in deck_programs.__dict__.items():
             if isinstance(cls, type):
-                iprog = cls()
-                if isinstance(iprog, DeckProgram):
+                if issubclass(cls, DeckProgram):
                     self.programs.append(cls())
                     self.program_dict[iprog.name] = iprog
                     #print(iprog.name)
